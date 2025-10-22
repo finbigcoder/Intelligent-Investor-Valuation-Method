@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" class="font-sans">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intelligent Investor Valuation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --color-background: #0D1117;
+        --color-card: rgba(22, 27, 34, 0.7);
+        --color-border: #30363d;
+        --color-border-glow: rgba(34, 211, 238, 0.3);
+        --color-primary: #22d3ee;
+        --color-primary-light: #67e8f9;
+        --color-text-primary: #e6edf3;
+        --color-text-secondary: #8b949e;
+        --color-text-tertiary: #6e7681;
+        --font-family-sans: 'Inter', sans-serif;
+      }
+      body {
+        background-color: var(--color-background);
+        color: var(--color-text-primary);
+        font-family: var(--font-family-sans);
+        background-image:
+          linear-gradient(rgba(139, 148, 158, 0.15) 1px, transparent 1px),
+          linear-gradient(to right, rgba(139, 148, 158, 0.15) 1px, transparent 1px);
+        background-size: 40px 40px;
+        background-position: -1px -1px;
+      }
+      .font-sans {
+        font-family: var(--font-family-sans);
+      }
+      @keyframes fade-in-up {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-up {
+        animation: fade-in-up 0.5s ease-out forwards;
+      }
+      .glass-card {
+        background-color: var(--color-card);
+        border: 1px solid var(--color-border);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .glowing-border {
+        box-shadow: 0 0 0 1px var(--color-border), 0 0 20px var(--color-border-glow);
+      }
+      .text-gradient-primary {
+        background: linear-gradient(45deg, var(--color-primary), var(--color-primary-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .fintech-bg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: radial-gradient(circle at 100% 0, rgba(34, 211, 238, 0.08) 0%, rgba(34, 211, 238, 0) 50%);
+        pointer-events: none;
+        z-index: 0;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0",
+    "chart.js/": "https://aistudiocdn.com/chart.js@^4.4.3/",
+    "chart.js": "https://aistudiocdn.com/chart.js@^4.4.3",
+    "react-chartjs-2/": "https://aistudiocdn.com/react-chartjs-2@^5.2.0/",
+    "react-chartjs-2": "https://aistudiocdn.com/react-chartjs-2@^5.2.0",
+    "chartjs-adapter-date-fns": "https://aistudiocdn.com/chartjs-adapter-date-fns@^3.0.0",
+    "date-fns/": "https://aistudiocdn.com/date-fns@^3.6.0/",
+    "date-fns": "https://aistudiocdn.com/date-fns@^3.6.0",
+    "chartjs-plugin-zoom": "https://aistudiocdn.com/chartjs-plugin-zoom@^2.0.1"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

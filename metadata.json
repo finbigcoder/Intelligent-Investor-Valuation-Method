@@ -1,0 +1,5 @@
+{
+  "name": "Copy of Intelligent Investor Stock Valuation",
+  "description": "An application that performs a stock valuation based on Benjamin Graham's value investing principles from 'The Intelligent Investor'. Users can input a stock ticker to receive an automated valuation and investment recommendation. This tool is for educational purposes only and is not financial advice.",
+  "requestFramePermissions": []
+}
