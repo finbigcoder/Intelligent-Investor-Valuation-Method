@@ -6,7 +6,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Disclaimer from './components/Disclaimer';
 import HistoryPanel from './components/HistoryPanel';
 import InitialState from './components/InitialState';
-import { getStockData, getETFData } from './services/geminiService';
+import { getStockData, getETFData } from './services/aiService';
 import { useHistory } from './hooks/useHistory';
 import { ApiError, DataProcessingError, InvalidTickerError } from './services/errors';
 import { runStockAnalysis } from './lib/analysis';
