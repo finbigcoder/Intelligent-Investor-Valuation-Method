@@ -1,4 +1,6 @@
 
+// ─── Shared primitives ────────────────────────────────────────────────────────
+
 export interface HistoricalPrice {
   date: string; // YYYY-MM-DD
   price: number;
@@ -26,12 +28,29 @@ export interface GroundingChunk {
   };
 }
 
-// Interface for metrics that require year-over-year comparison
+/** Metrics that require year-over-year comparison */
 export interface YearlyFinancialMetric {
   currentYear: number;
   previousYear: number;
 }
 
+export type AssetType = 'stock' | 'etf';
+export type Recommendation = 'Strong Buy' | 'Buy' | 'Hold' | 'Sell' | 'Speculative';
+
+export interface ChecklistItem {
+  name: string;
+  pass: boolean;
+  value: string;
+  description: string;
+}
+
+export interface AnalysisSummary {
+  recommendation: Recommendation;
+  explanation: string;
+  scorecard: { name: string; value: string; score: number; maxScore: number }[];
+}
+
+// ─── Stock-specific types ─────────────────────────────────────────────────────
 
 export interface StockData {
   ticker: string;
@@ -40,64 +59,45 @@ export interface StockData {
   currentPrice: number;
   marketCap: number;
 
-  // --- Core Financials ---
   eps: number; // TTM
   bookValuePerShare: number;
   currentAssets: number;
   currentLiabilities: number;
-  
-  // --- Phase 1: Initial Screening ---
-  roe: number; // Return on Equity
+
+  roe: number;
   debtToEquity: number;
 
-  // --- Phase 2: Graham's Defensive Criteria ---
   longTermDebt: number;
   hasPositiveEarningsLast10Years: boolean;
   hasUninterruptedDividendsLast20Years: boolean;
   eps10YearsAgo: number;
   threeYearAverageEPS: number;
 
-  // --- Phase 3: Graham's Valuation ---
   totalLiabilities: number;
   preferredStockValue: number;
-  
-  // --- Phase 4: Piotroski F-Score ---
+
   sharesOutstanding: YearlyFinancialMetric;
   roa: YearlyFinancialMetric;
   operatingCashFlow: number;
   netIncome: number;
-  longTermDebtHistory: YearlyFinancialMetric; // Using different name to avoid conflict
+  longTermDebtHistory: YearlyFinancialMetric;
   currentRatioHistory: YearlyFinancialMetric;
   grossMargin: YearlyFinancialMetric;
   assetTurnover: YearlyFinancialMetric;
 
-  // --- Phase 10: Peter Lynch's PEG Ratio ---
   estimatedEPSGrowthRate: number;
 
-  // --- Qualitative Analysis ---
   qualitativeAnalysis: {
     economicMoat: string;
     managementQuality: string;
   };
 
-  // --- Chart Data ---
   historicalPrices: HistoricalPrice[];
   historicalEPS: HistoricalEPS[];
   historicalDebtToEquity: HistoricalDebtToEquity[];
   historicalPE: HistoricalPE[];
-  
-  // --- Grounding ---
+
   groundingChunks?: GroundingChunk[];
-}
-
-
-export type Recommendation = 'Strong Buy' | 'Buy' | 'Hold' | 'Sell' | 'Speculative';
-
-export interface ChecklistItem {
-  name: string;
-  pass: boolean;
-  value: string;
-  description: string;
 }
 
 export interface GrahamAnalysis {
@@ -120,13 +120,8 @@ export interface ValuationAnalysis {
   lynchFairValue: number;
 }
 
-export interface AnalysisSummary {
-  recommendation: Recommendation;
-  explanation: string;
-  scorecard: { name: string; value: string; score: number, maxScore: number }[];
-}
-
-export interface ValuationResult {
+export interface StockValuationResult {
+  assetType: 'stock';
   stockData: StockData;
   summary: AnalysisSummary;
   graham: GrahamAnalysis;
@@ -134,10 +129,100 @@ export interface ValuationResult {
   valuation: ValuationAnalysis;
 }
 
+// ─── ETF / Index-fund-specific types ─────────────────────────────────────────
+
+export interface ETFHolding {
+  name: string;
+  weight: number; // as decimal, e.g. 0.07 = 7%
+}
+
+export interface SectorAllocation {
+  sector: string;
+  weight: number; // as decimal
+}
+
+export interface AnnualReturn {
+  year: number;
+  returnPct: number; // as decimal, e.g. 0.12 = 12%
+}
+
+export interface ETFData {
+  ticker: string;
+  name: string;
+  currentPrice: number;
+
+  /** Annual management fee as decimal (0.0003 = 0.03%) */
+  expenseRatio: number;
+
+  /** Assets Under Management in USD */
+  aum: number;
+
+  /** ISO date string: YYYY-MM-DD */
+  inceptionDate: string;
+
+  indexTracked: string;
+  numberOfHoldings: number;
+  dividendYield: number; // as decimal
+
+  /** Standard deviation of returns vs benchmark (annualised, as decimal) */
+  trackingError: number;
+
+  top10Holdings: ETFHolding[];
+  sectorAllocations: SectorAllocation[];
+  annualReturns: AnnualReturn[];
+
+  ytdReturn: number;
+  oneYearReturn: number;
+  threeYearAnnualizedReturn: number;
+  fiveYearAnnualizedReturn: number;
+  tenYearAnnualizedReturn: number;
+
+  historicalPrices: HistoricalPrice[];
+  groundingChunks?: GroundingChunk[];
+}
+
+export interface ETFCostAnalysis {
+  checks: ChecklistItem[];
+  score: number;   // 0-30
+  maxScore: 30;
+}
+
+export interface ETFQualityAnalysis {
+  checks: ChecklistItem[];
+  score: number;   // 0-30
+  maxScore: 30;
+}
+
+export interface ETFPerformanceAnalysis {
+  checks: ChecklistItem[];
+  score: number;   // 0-40
+  maxScore: 40;
+}
+
+export interface ETFValuationResult {
+  assetType: 'etf';
+  etfData: ETFData;
+  cost: ETFCostAnalysis;
+  quality: ETFQualityAnalysis;
+  performance: ETFPerformanceAnalysis;
+  summary: AnalysisSummary;
+}
+
+// ─── Union result type ────────────────────────────────────────────────────────
+
+export type AnyValuationResult = StockValuationResult | ETFValuationResult;
+
+// ─── Backwards-compatible alias (old code refers to ValuationResult) ──────────
+export type ValuationResult = StockValuationResult;
+
+// ─── History ─────────────────────────────────────────────────────────────────
+
 export interface HistoryEntry {
   ticker: string;
   companyName: string;
+  assetType: AssetType;
   valuationDate: string; // ISO string
   recommendation: Recommendation;
-  intrinsicValue: number; // Storing Graham number for consistency
+  /** Graham Number for stocks; N/A (0) for ETFs */
+  intrinsicValue: number;
 }

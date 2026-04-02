@@ -1,7 +1,7 @@
 
 
 import React, { useState } from 'react';
-import type { ValuationResult as ValuationResultType, Recommendation, ChecklistItem, GroundingChunk } from '../types';
+import type { StockValuationResult as ValuationResultType, Recommendation, ChecklistItem, GroundingChunk } from '../types';
 import PriceChart from './PriceChart';
 import FinancialHealthCharts from './FinancialHealthCharts';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler } from 'chart.js';
@@ -116,7 +116,7 @@ const DataSources: React.FC<{ chunks?: GroundingChunk[] }> = ({ chunks }) => {
 
 // --- MAIN COMPONENT --- //
 interface ValuationResultProps {
-  result: ValuationResultType;
+  result: ValuationResultType; // StockValuationResult
   onRefresh: () => void;
   lastFetchedTimestamp: Date | null;
   isLoading: boolean;

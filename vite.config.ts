@@ -18,6 +18,12 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      }
+      },
+      test: {
+        globals: true,
+        environment: 'happy-dom',
+        setupFiles: ['./vitest.setup.ts'],
+        include: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
+      },
     };
 });

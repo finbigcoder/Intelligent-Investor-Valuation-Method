@@ -1,46 +1,63 @@
-
-
 import { useState, useEffect, useCallback } from 'react';
-import type { ValuationResult, HistoryEntry } from '../types';
+import type { AnyValuationResult, HistoryEntry } from '../types';
 
 const STORAGE_KEY = 'stockValuationHistory';
+const MAX_ENTRIES = 50;
 
-export const useHistory = (): [HistoryEntry[], (result: ValuationResult) => void, () => void] => {
+export const useHistory = (): [
+  HistoryEntry[],
+  (result: AnyValuationResult) => void,
+  () => void
+] => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
     try {
-      const storedHistory = localStorage.getItem(STORAGE_KEY);
-      if (storedHistory) {
-        setHistory(JSON.parse(storedHistory));
-      }
-    } catch (error) {
-      console.error("Failed to parse history from localStorage", error);
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setHistory(JSON.parse(raw));
+    } catch {
+      console.error('Failed to parse history from localStorage');
     }
   }, []);
 
-  const saveHistory = (newHistory: HistoryEntry[]) => {
+  const saveHistory = (next: HistoryEntry[]) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
-      setHistory(newHistory);
-    } catch (error) {
-      console.error("Failed to save history to localStorage", error);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      setHistory(next);
+    } catch {
+      console.error('Failed to save history to localStorage');
     }
   };
 
-  const addHistoryEntry = useCallback((result: ValuationResult) => {
-    const newEntry: HistoryEntry = {
-      // FIX: Access nested properties from the result object to build the history entry.
-      ticker: result.stockData.ticker,
-      companyName: result.stockData.companyName,
-      valuationDate: new Date().toISOString(),
-      recommendation: result.summary.recommendation,
-      intrinsicValue: result.valuation.grahamNumber,
-    };
-    // Add to the beginning of the list and limit history size to 50 entries
-    const updatedHistory = [newEntry, ...history].slice(0, 50); 
-    saveHistory(updatedHistory);
-  }, [history]);
+  const addHistoryEntry = useCallback(
+    (result: AnyValuationResult) => {
+      let entry: HistoryEntry;
+
+      if (result.assetType === 'etf') {
+        entry = {
+          ticker: result.etfData.ticker,
+          companyName: result.etfData.name,
+          assetType: 'etf',
+          valuationDate: new Date().toISOString(),
+          recommendation: result.summary.recommendation,
+          intrinsicValue: 0,
+        };
+      } else {
+        entry = {
+          ticker: result.stockData.ticker,
+          companyName: result.stockData.companyName,
+          assetType: 'stock',
+          valuationDate: new Date().toISOString(),
+          recommendation: result.summary.recommendation,
+          intrinsicValue: result.valuation.grahamNumber,
+        };
+      }
+
+      const updated = [entry, ...history].slice(0, MAX_ENTRIES);
+      saveHistory(updated);
+    },
+    [history]
+  );
 
   const clearHistory = useCallback(() => {
     saveHistory([]);
