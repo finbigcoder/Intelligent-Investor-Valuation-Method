@@ -2,11 +2,14 @@ import { GoogleGenAI } from '@google/genai';
 import type { StockData, ETFData, AssetType } from '../types';
 import { ApiError, InvalidTickerError, DataProcessingError } from './errors';
 
-if (!process.env.API_KEY) {
-  throw new Error('API_KEY environment variable is not set');
+function getAI(): GoogleGenAI {
+  if (!process.env.API_KEY) {
+    throw new ApiError(
+      'No Gemini API key configured. Add GEMINI_API_KEY to your .env file and restart the dev server.'
+    );
+  }
+  return new GoogleGenAI({ apiKey: process.env.API_KEY });
 }
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // ─── Cache ────────────────────────────────────────────────────────────────────
 
@@ -101,7 +104,7 @@ export async function getStockData(ticker: string): Promise<StockData> {
   console.log(`[fetch] ${key} (stock)`);
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: 'gemini-2.5-pro',
       contents: [{ text: buildStockPrompt(ticker) }],
       config: {
@@ -214,7 +217,7 @@ export async function getETFData(ticker: string): Promise<ETFData> {
   console.log(`[fetch] ${key} (etf)`);
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: 'gemini-2.5-pro',
       contents: [{ text: buildETFPrompt(ticker) }],
       config: {
