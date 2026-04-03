@@ -77,6 +77,15 @@
 </head>
   <body>
     <div id="root"></div>
+    <!-- Catch any JS errors and show them on screen so blank-page issues are visible -->
+    <script>
+      window.addEventListener('error', function(e) {
+        document.body.innerHTML = '<div style="color:#f87171;background:#1a1a1a;padding:2rem;font-family:monospace;font-size:14px;white-space:pre-wrap;position:fixed;inset:0;overflow:auto;z-index:9999"><strong style="font-size:18px">JavaScript Error — React failed to start</strong>\n\n' + e.message + '\n\nFile: ' + e.filename + '\nLine: ' + e.lineno + '\n\nPlease copy this error and share it.</div>';
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        document.body.innerHTML = '<div style="color:#f87171;background:#1a1a1a;padding:2rem;font-family:monospace;font-size:14px;white-space:pre-wrap;position:fixed;inset:0;overflow:auto;z-index:9999"><strong style="font-size:18px">Unhandled Promise Error — React failed to start</strong>\n\n' + String(e.reason) + '\n\nPlease copy this error and share it.</div>';
+      });
+    </script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
