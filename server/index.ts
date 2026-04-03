@@ -5,7 +5,8 @@
 
 import express from 'express';
 import cors from 'cors';
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
+const yahooFinance = new YahooFinance();
 import type { StockData, ETFData } from '../types';
 
 const app = express();
@@ -32,7 +33,7 @@ function num(v: any, fallback = 0): number {
 
 async function getHistoricalPrices(ticker: string): Promise<{ date: string; price: number }[]> {
   try {
-    const chart: any = await yahooFinance.chart(ticker, { interval: '1mo', range: '5y' });
+    const chart: any = await yahooFinance.chart(ticker, { interval: '1mo', period1: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000) });
     return (chart?.quotes ?? [])
       .filter((q: any) => q.date && q.close != null)
       .map((q: any) => ({
