@@ -6,9 +6,8 @@
 import type { StockData, ETFData, AssetType } from '../types';
 import { ApiError, InvalidTickerError, DataProcessingError } from './errors';
 
-// In dev the Vite proxy forwards /api → http://localhost:3001.
-// In production point this at your deployed backend URL.
-const BASE = '/api';
+// Call the Express backend directly. CORS is enabled on the server for localhost:3000.
+const BASE = 'http://localhost:3001/api';
 
 // ─── Cache (client-side, mirrors the server's 15-min TTL) ─────────────────────
 
