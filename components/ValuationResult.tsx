@@ -218,7 +218,17 @@ const ValuationResult: React.FC<ValuationResultProps> = ({ result, onRefresh, la
             <div className="p-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                     <div className="flex items-center">
-                        <div className="flex-shrink-0 w-16 h-16 mr-4 rounded-full bg-[#1C1C1E] border border-[var(--color-border)] flex items-center justify-center"><img src={stockData.logoUrl} alt={`${stockData.companyName} logo`} className="w-full h-full object-contain rounded-full" /></div>
+                        <div className="flex-shrink-0 w-16 h-16 mr-4 rounded-full bg-[#1C1C1E] border border-[var(--color-border)] flex items-center justify-center"><img
+  src={stockData.logoUrl}
+  alt={`${stockData.companyName} logo`}
+  className="w-full h-full object-contain rounded-full"
+  onError={(e) => {
+    const t = e.currentTarget;
+    const fallback = `https://assets.parqet.com/logos/symbol/${stockData.ticker}`;
+    if (t.src !== fallback) t.src = fallback;
+    else t.style.display = 'none';
+  }}
+/></div>
                         <div>
                             <h2 className="text-3xl font-bold text-white">{stockData.companyName}</h2>
                             <p className="text-lg text-[var(--color-text-secondary)] font-mono">{stockData.ticker}</p>

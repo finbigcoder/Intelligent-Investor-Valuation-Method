@@ -121,10 +121,7 @@ async function buildStockData(ticker: string): Promise<StockData> {
   const shares1 = num(stats.impliedSharesOutstanding) || shares0;
   const divYield = num(detail.dividendYield) || num(stats.dividendYield) || 0;
 
-  const website = String(profile.website ?? '').replace(/https?:\/\/(www\.)?/, '').split('/')[0];
-  const logoUrl = website
-    ? `https://logo.clearbit.com/${website}`
-    : `https://assets.parqet.com/logos/symbol/${ticker}`;
+  const logoUrl = `https://assets.parqet.com/logos/symbol/${ticker}`;
 
   return {
     ticker: ticker.toUpperCase(),
