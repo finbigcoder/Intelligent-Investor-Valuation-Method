@@ -283,8 +283,18 @@ app.get('/api/etf/:ticker', async (req, res) => {
   }
 });
 
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, source: 'yahoo-finance2', keyRequired: false });
+app.get('/api/health', async (_req, res) => {
+  let internetOk = false;
+  let internetError = '';
+  try {
+    const r = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+    internetOk = r.status < 500;
+  } catch (e) {
+    internetError = e instanceof Error ? e.message : String(e);
+  }
+  res.json({ ok: true, source: 'yahoo-finance2', keyRequired: false, internetOk, internetError });
 });
 
 const PORT = 3001;

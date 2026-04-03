@@ -93,9 +93,7 @@ const App: React.FC = () => {
           `Ticker "${e.ticker}" not found. Please enter a valid ticker for NYSE or NASDAQ.`
         );
       } else if (e instanceof ApiError) {
-        setError(
-          'Could not connect to the financial data service. Please check your network connection.'
-        );
+        setError(`Server error: ${e.message}`);
       } else if (e instanceof DataProcessingError) {
         setError('Received unexpected data from the financial service. The data could not be processed.');
       } else if (e instanceof Error) {
