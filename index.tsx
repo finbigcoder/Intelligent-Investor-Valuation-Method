@@ -3,55 +3,31 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { error: Error | null }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { error: null };
-  }
+function ErrorFallback({ error }: { error: Error }) {
+  return (
+    <div style={{
+      color: '#f87171', background: '#1a1a1a', padding: '2rem',
+      fontFamily: 'monospace', fontSize: '14px', whiteSpace: 'pre-wrap',
+      position: 'fixed', inset: 0, overflow: 'auto', zIndex: 9999,
+    }}>
+      <strong style={{ fontSize: '18px' }}>React Error — please copy and share this:</strong>
+      {'\n\n'}{error.message}{'\n\n'}{error.stack}
+    </div>
+  );
+}
 
-  static getDerivedStateFromError(error: Error) {
-    return { error };
-  }
-
+interface EBState { error: Error | null }
+class ErrorBoundary extends React.Component<React.PropsWithChildren, EBState> {
+  state: EBState = { error: null };
+  static getDerivedStateFromError(e: Error): EBState { return { error: e }; }
   render() {
-    if (this.state.error) {
-      return (
-        <div style={{
-          color: '#f87171',
-          background: '#1a1a1a',
-          padding: '2rem',
-          fontFamily: 'monospace',
-          fontSize: '14px',
-          whiteSpace: 'pre-wrap',
-          position: 'fixed',
-          inset: 0,
-          overflow: 'auto',
-          zIndex: 9999,
-        }}>
-          <strong style={{ fontSize: '18px' }}>React Render Error</strong>
-          {'\n\n'}
-          {this.state.error.message}
-          {'\n\n'}
-          {this.state.error.stack}
-          {'\n\nPlease copy this entire message and share it.'}
-        </div>
-      );
-    }
-    return this.props.children;
+    return this.state.error
+      ? React.createElement(ErrorFallback, { error: this.state.error })
+      : (this as unknown as React.Component<React.PropsWithChildren>).props.children;
   }
 }
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
-
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <ErrorBoundary>
-    <App />
-  </ErrorBoundary>
+const root = document.getElementById('root')!;
+ReactDOM.createRoot(root).render(
+  React.createElement(ErrorBoundary, null, React.createElement(App))
 );
