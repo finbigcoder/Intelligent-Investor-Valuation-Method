@@ -1,28 +1,23 @@
 import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, '.', '');
-    return {
-      server: {
-        port: 3000,
-        host: '0.0.0.0',
+export default defineConfig({
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+    proxy: {
+      // Forward all /api calls to the Express backend — no API key in the browser
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
       },
-      plugins: [react()],
-      define: {
-        'process.env.ANTHROPIC_API_KEY': JSON.stringify(env.ANTHROPIC_API_KEY)
-      },
-      resolve: {
-        alias: {
-          '@': path.resolve(__dirname, '.'),
-        }
-      },
-      test: {
-        globals: true,
-        environment: 'happy-dom',
-        setupFiles: ['./vitest.setup.ts'],
-        include: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
-      },
-    };
+    },
+  },
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '.'),
+    },
+  },
 });
